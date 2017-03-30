@@ -5,6 +5,7 @@ import (
 	ads "google.golang.org/appengine/datastore"
 )
 
+// Client is a client for reading and writing data in a datastore dataset.
 type Client interface {
 	NameKey(kind, name string) Key
 	IncompleteKey(kind string) Key
@@ -15,19 +16,22 @@ type Client interface {
 	Run(query Query) Iterator
 }
 
+// Key represents the datastore key for a stored entity.
 type Key interface {
-	GetId() int64
+	GetID() int64
 	GetName() string
 
 	getInternal() internalKey
 }
 
+// Query represents a datastore query.
 type Query interface {
 	Limit(limit int) Query
 
 	getInternal() internalQuery
 }
 
+// Iterator is the result of running a query.
 type Iterator interface {
 	Next(dst interface{}) (Key, error)
 }

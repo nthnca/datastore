@@ -10,6 +10,7 @@ type gaeClient struct {
 	context context.Context
 }
 
+// Create a datastore client for use in Google App Engine.
 func NewGaeClient(ctx context.Context) Client {
 	return &gaeClient{context: ctx}
 }
@@ -51,7 +52,7 @@ func (c *gaeKey) getInternal() internalKey {
 	return internalKey{gae: c.key}
 }
 
-func (c *gaeKey) GetId() int64 {
+func (c *gaeKey) GetID() int64 {
 	return c.key.IntID()
 }
 

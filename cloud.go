@@ -10,9 +10,10 @@ type cloudClient struct {
 	client  *cds.Client
 }
 
-func NewCloudClient(project_id string) (Client, error) {
+// Create a datastore client for use outside of Google App Engine.
+func NewCloudClient(projectID string) (Client, error) {
 	ctx := context.Background()
-	client, err := cds.NewClient(ctx, project_id)
+	client, err := cds.NewClient(ctx, projectID)
 	return &cloudClient{context: ctx, client: client}, err
 }
 
@@ -54,7 +55,7 @@ func (c *cloudKey) getInternal() internalKey {
 	return internalKey{cloud: c.key}
 }
 
-func (c *cloudKey) GetId() int64 {
+func (c *cloudKey) GetID() int64 {
 	return c.key.ID
 }
 
