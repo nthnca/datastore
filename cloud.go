@@ -10,7 +10,8 @@ type cloudClient struct {
 	client  *cds.Client
 }
 
-// Create a datastore client for use outside of Google App Engine.
+// NewCloudClient creates a datastore client for use outside of Google App
+// Engine.
 func NewCloudClient(projectID string) (Client, error) {
 	ctx := context.Background()
 	client, err := cds.NewClient(ctx, projectID)

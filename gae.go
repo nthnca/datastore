@@ -10,7 +10,7 @@ type gaeClient struct {
 	context context.Context
 }
 
-// Create a datastore client for use in Google App Engine.
+// NewGaeClient creates a datastore client for use in Google App Engine.
 func NewGaeClient(ctx context.Context) Client {
 	return &gaeClient{context: ctx}
 }
