@@ -8,11 +8,19 @@ import (
 // Client is a client for reading and writing data in a datastore dataset.
 type Client interface {
 	NameKey(kind, name string) Key
+
 	IncompleteKey(kind string) Key
 	NewQuery(kind string) Query
+
+	Close() error
+
 	Delete(key Key) error
+	DeleteMulti(keys []Key) error
 	Get(key Key, dst interface{}) error
+	GetAll(q Query, dst interface{}) ([]Key, error)
+	GetMulti(keys []Key, dst interface{}) error
 	Put(key Key, src interface{}) (Key, error)
+	PutMulti(keys []Key, src interface{}) ([]Key, error)
 	Run(query Query) Iterator
 }
 

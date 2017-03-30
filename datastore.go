@@ -5,7 +5,7 @@
 // cloud.google.com/go/datastore and google.golang.org/appengine/datastore.
 // The documentation for this project is purposely very light, with a
 // recommendation that you normally should just follow the documentation for
-// https://godoc.org/google.golang.org/appengine/datastore.
+// https://godoc.org/cloud.google.com/go/datastore.
 //
 // I have only really created wrappers around the functionality I use, but
 // overtime I expect this to be a complete wrapper. Pull requests are
