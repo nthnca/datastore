@@ -18,12 +18,23 @@ func NewCloudClient(projectID string) (Client, error) {
 	return &cloudClient{context: ctx, client: client}, err
 }
 
-func (c *cloudClient) IncompleteKey(kind string) Key {
-	return &cloudKey{key: cds.IncompleteKey(kind, nil)}
+func getCloudKey(key Key) *cds.Key {
+	if key == nil {
+		return nil
+	}
+	return key.getInternal().cloud
 }
 
-func (c *cloudClient) NameKey(kind, name string) Key {
-	return &cloudKey{key: cds.NameKey(kind, name, nil)}
+func (c *cloudClient) IDKey(kind string, id int64, parent Key) Key {
+	return &cloudKey{key: cds.IDKey(kind, id, getCloudKey(parent))}
+}
+
+func (c *cloudClient) IncompleteKey(kind string, parent Key) Key {
+	return &cloudKey{key: cds.IncompleteKey(kind, getCloudKey(parent))}
+}
+
+func (c *cloudClient) NameKey(kind, name string, parent Key) Key {
+	return &cloudKey{key: cds.NameKey(kind, name, getCloudKey(parent))}
 }
 
 func (c *cloudClient) AllocateIDs(keys []Key) ([]Key, error) {
@@ -39,13 +50,13 @@ func (c *cloudClient) Close() error {
 }
 
 func (c *cloudClient) Delete(key Key) error {
-	return c.client.Delete(c.context, key.getInternal().cloud)
+	return c.client.Delete(c.context, getCloudKey(key))
 }
 
 func convertKeyToCloudKey(keys []Key) []*cds.Key {
 	rv := make([]*cds.Key, len(keys))
 	for i := range keys {
-		rv[i] = keys[i].getInternal().cloud
+		rv[i] = getCloudKey(keys[i])
 	}
 	return rv
 }
@@ -64,7 +75,7 @@ func (c *cloudClient) DeleteMulti(keys []Key) error {
 }
 
 func (c *cloudClient) Get(key Key, dst interface{}) error {
-	return c.client.Get(c.context, key.getInternal().cloud, dst)
+	return c.client.Get(c.context, getCloudKey(key), dst)
 }
 
 func (c *cloudClient) GetAll(q Query, dst interface{}) ([]Key, error) {
@@ -80,7 +91,7 @@ func (c *cloudClient) GetMulti(keys []Key, dst interface{}) error {
 }
 
 func (c *cloudClient) Put(key Key, src interface{}) (Key, error) {
-	k, err := c.client.Put(c.context, key.getInternal().cloud, src)
+	k, err := c.client.Put(c.context, getCloudKey(key), src)
 	return &cloudKey{key: k}, err
 }
 

@@ -15,12 +15,23 @@ func NewGaeClient(ctx context.Context) Client {
 	return &gaeClient{context: ctx}
 }
 
-func (c *gaeClient) NameKey(kind, name string) Key {
-	return &gaeKey{key: ads.NewKey(c.context, kind, name, 0, nil)}
+func getGaeKey(key Key) *ads.Key {
+	if key == nil {
+		return nil
+	}
+	return key.getInternal().gae
 }
 
-func (c *gaeClient) IncompleteKey(kind string) Key {
-	return &gaeKey{key: ads.NewIncompleteKey(c.context, kind, nil)}
+func (c *gaeClient) IDKey(kind string, id int64, parent Key) Key {
+	return &gaeKey{key: ads.NewKey(c.context, kind, "", id, getGaeKey(parent))}
+}
+
+func (c *gaeClient) IncompleteKey(kind string, parent Key) Key {
+	return &gaeKey{key: ads.NewIncompleteKey(c.context, kind, getGaeKey(parent))}
+}
+
+func (c *gaeClient) NameKey(kind, name string, parent Key) Key {
+	return &gaeKey{key: ads.NewKey(c.context, kind, name, 0, getGaeKey(parent))}
 }
 
 func (c *gaeClient) Close() error {
@@ -28,13 +39,13 @@ func (c *gaeClient) Close() error {
 }
 
 func (c *gaeClient) Delete(key Key) error {
-	return ads.Delete(c.context, key.getInternal().gae)
+	return ads.Delete(c.context, getGaeKey(key))
 }
 
 func convertKeyToGaeKey(keys []Key) []*ads.Key {
 	rv := make([]*ads.Key, len(keys))
 	for i := range keys {
-		rv[i] = keys[i].getInternal().gae
+		rv[i] = getGaeKey(keys[i])
 	}
 	return rv
 }
@@ -52,7 +63,7 @@ func (c *gaeClient) DeleteMulti(keys []Key) error {
 }
 
 func (c *gaeClient) Get(key Key, dst interface{}) error {
-	return ads.Get(c.context, key.getInternal().gae, dst)
+	return ads.Get(c.context, getGaeKey(key), dst)
 }
 
 func (c *gaeClient) GetAll(q Query, dst interface{}) ([]Key, error) {
@@ -68,7 +79,7 @@ func (c *gaeClient) GetMulti(keys []Key, dst interface{}) error {
 }
 
 func (c *gaeClient) Put(key Key, src interface{}) (Key, error) {
-	k, err := ads.Put(c.context, key.getInternal().gae, src)
+	k, err := ads.Put(c.context, getGaeKey(key), src)
 	return &gaeKey{key: k}, err
 }
 
