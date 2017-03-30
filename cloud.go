@@ -5,17 +5,17 @@ import (
 	"golang.org/x/net/context"
 )
 
-type cloudClient struct {
-	context context.Context
-	client  *cds.Client
-}
-
 // NewCloudClient creates a datastore client for use outside of Google App
 // Engine.
 func NewCloudClient(projectID string) (Client, error) {
 	ctx := context.Background()
 	client, err := cds.NewClient(ctx, projectID)
 	return &cloudClient{context: ctx, client: client}, err
+}
+
+type cloudClient struct {
+	context context.Context
+	client  *cds.Client
 }
 
 func getCloudKey(key Key) *cds.Key {

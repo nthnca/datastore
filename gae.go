@@ -6,13 +6,13 @@ import (
 	ads "google.golang.org/appengine/datastore"
 )
 
-type gaeClient struct {
-	context context.Context
-}
-
 // NewGaeClient creates a datastore client for use in Google App Engine.
 func NewGaeClient(ctx context.Context) Client {
 	return &gaeClient{context: ctx}
+}
+
+type gaeClient struct {
+	context context.Context
 }
 
 func getGaeKey(key Key) *ads.Key {
