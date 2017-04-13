@@ -1,6 +1,8 @@
 package datastore
 
 import (
+	"reflect"
+
 	cds "cloud.google.com/go/datastore"
 	"golang.org/x/net/context"
 )
@@ -132,12 +134,28 @@ type cloudQuery struct {
 	internal *cds.Query
 }
 
-func (c *cloudQuery) Limit(limit int) Query {
-	return &cloudQuery{internal: c.internal.Limit(limit)}
+func (q *cloudQuery) Filter(filterStr string, value interface{}) Query {
+	if reflect.TypeOf(value) == reflect.TypeOf((*Key)(nil)) {
+		value = value.(Key).getInternal()
+	}
+	return &cloudQuery{internal: q.internal.Filter(filterStr,
+		value)}
 }
 
-func (c *cloudQuery) getInternal() internalQuery {
-	return internalQuery{cloud: c.internal}
+func (q *cloudQuery) Limit(limit int) Query {
+	return &cloudQuery{internal: q.internal.Limit(limit)}
+}
+
+func (q *cloudQuery) Offset(offset int) Query {
+	return &cloudQuery{internal: q.internal.Offset(offset)}
+}
+
+func (q *cloudQuery) Order(fieldName string) Query {
+	return &cloudQuery{internal: q.internal.Order(fieldName)}
+}
+
+func (q *cloudQuery) getInternal() internalQuery {
+	return internalQuery{cloud: q.internal}
 }
 
 type cloudIterator struct {

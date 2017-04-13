@@ -1,6 +1,8 @@
 package datastore
 
 import (
+	"reflect"
+
 	"golang.org/x/net/context"
 	"google.golang.org/api/iterator"
 	ads "google.golang.org/appengine/datastore"
@@ -119,12 +121,27 @@ type gaeQuery struct {
 	internal *ads.Query
 }
 
-func (c *gaeQuery) Limit(limit int) Query {
-	return &gaeQuery{internal: c.internal.Limit(limit)}
+func (q *gaeQuery) Filter(filterStr string, value interface{}) Query {
+	if reflect.TypeOf(value) == reflect.TypeOf((*Key)(nil)) {
+		value = value.(Key).getInternal()
+	}
+	return &gaeQuery{internal: q.internal.Filter(filterStr, value)}
 }
 
-func (c *gaeQuery) getInternal() internalQuery {
-	return internalQuery{gae: c.internal}
+func (q *gaeQuery) Limit(limit int) Query {
+	return &gaeQuery{internal: q.internal.Limit(limit)}
+}
+
+func (q *gaeQuery) Offset(offset int) Query {
+	return &gaeQuery{internal: q.internal.Offset(offset)}
+}
+
+func (q *gaeQuery) Order(fieldName string) Query {
+	return &gaeQuery{internal: q.internal.Order(fieldName)}
+}
+
+func (q *gaeQuery) getInternal() internalQuery {
+	return internalQuery{gae: q.internal}
 }
 
 type gaeIterator struct {
