@@ -35,6 +35,9 @@ type Key interface {
 
 // Query represents a datastore query.
 type Query interface {
+	Ancestor(ancestor Key) Query
+	Distinct() Query
+	EventualConsistency() Query
 	Filter(filterStr string, value interface{}) Query
 	Limit(limit int) Query
 	Offset(offset int) Query

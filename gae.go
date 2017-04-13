@@ -121,6 +121,18 @@ type gaeQuery struct {
 	internal *ads.Query
 }
 
+func (q *gaeQuery) Ancestor(ancestor Key) Query {
+	return &gaeQuery{internal: q.internal.Ancestor(ancestor.getInternal().gae)}
+}
+
+func (q *gaeQuery) Distinct() Query {
+	return &gaeQuery{internal: q.internal.Distinct()}
+}
+
+func (q *gaeQuery) EventualConsistency() Query {
+	return &gaeQuery{internal: q.internal.EventualConsistency()}
+}
+
 func (q *gaeQuery) Filter(filterStr string, value interface{}) Query {
 	if reflect.TypeOf(value) == reflect.TypeOf((*Key)(nil)) {
 		value = value.(Key).getInternal()

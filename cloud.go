@@ -134,6 +134,18 @@ type cloudQuery struct {
 	internal *cds.Query
 }
 
+func (q *cloudQuery) Ancestor(ancestor Key) Query {
+	return &cloudQuery{internal: q.internal.Ancestor(ancestor.getInternal().cloud)}
+}
+
+func (q *cloudQuery) Distinct() Query {
+	return &cloudQuery{internal: q.internal.Distinct()}
+}
+
+func (q *cloudQuery) EventualConsistency() Query {
+	return &cloudQuery{internal: q.internal.EventualConsistency()}
+}
+
 func (q *cloudQuery) Filter(filterStr string, value interface{}) Query {
 	if reflect.TypeOf(value) == reflect.TypeOf((*Key)(nil)) {
 		value = value.(Key).getInternal()
