@@ -1,4 +1,4 @@
-# datastore
+# datastore [DEPRECATED]
 
 Compatability layer between the appengine and cloud datastore libraries.
 
